@@ -1,7 +1,27 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // src/services/socketHandler.ts
 
 import { Server } from "socket.io";
-import { getMessages, saveMessage } from "./prismaService";
+import { getMessages, getUser } from "./prismaService";
+import { PrismaClient } from "@prisma/client";
+import {
+  createOrder,
+  finalizeOrder,
+  lastOrderStatus,
+  refund,
+  updateOrder,
+} from "./actions";
+import { getAIResponse } from "./aiService";
+
+const prisma = new PrismaClient();
+
+const actions = {
+  "recommend:createOrder": createOrder,
+  "recommend:updateOrder": updateOrder,
+  "recommend:checkStatus": lastOrderStatus,
+  "recommend:finalizeOrder": finalizeOrder,
+  "recommend:refund": refund,
+};
 
 export const handleSocketConnection = (io: Server) => {
   io.on("connection", (socket) => {
@@ -9,28 +29,54 @@ export const handleSocketConnection = (io: Server) => {
 
     // Get and send messages for the user
     socket.on(
-      "chat_messages",
+      "messages",
       async (messageData: { session: { email: string } }) => {
         const { email } = messageData.session;
         const messages = await getMessages(email);
-        io.emit("chat_messages", messages);
+        io.emit("messages", messages);
       }
     );
 
-    // Handle incoming chat messages and save to DB
-    socket.on(
-      "chat_message",
-      async (messageData: { content: string; session: { email: string } }) => {
-        const { content, session: { email } } = messageData;
-        try {
-          await saveMessage(content, email);
-          const messages = await getMessages(email);
-          io.emit("chat_messages", messages);
-        } catch (error) {
-          console.error("Error saving message:", error);
+    // Handle sending messages
+    socket.on("message:send", async (messageData) => {
+      const {
+        session: {
+          user: { email, name },
+        },
+        content,
+      } = messageData;
+
+      try {
+        // Save the message and AI response to the database
+        const message = await prisma.message.create({
+          data: {
+            userId: (await getUser(email))!.id,
+            content,
+          },
+        });
+
+        socket.emit("message:sent", { ...message, user: { name, email } });
+
+        // Get AI response to handle the query
+        const aiResponse = await getAIResponse(content);
+
+        // If the AI determines that a recommendation is needed, trigger it
+        if (aiResponse?.includes("recommend:")) {
+          const recommendAction = aiResponse.split(" ");
+
+          // @ts-ignore
+          actions[recommendAction[0]](
+            {
+              session: messageData.session,
+              items: recommendAction[1],
+            },
+            socket
+          );
         }
+      } catch (error) {
+        console.error("Error processing message:", error);
       }
-    );
+    });
 
     socket.on("disconnect", () => {
       console.log("User disconnected");

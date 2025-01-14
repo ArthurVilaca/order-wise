@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-export const socket = io();
+const socket = io();
 
 interface Message {
   user: {
@@ -15,34 +15,40 @@ interface Message {
 
 const Chat = () => {
   const { data: session } = useSession();
-
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
   // Fetch previous messages on component mount
   useEffect(() => {
     if (session) {
-      socket.emit("chat_messages", { session });
+      socket.emit("messages", { session });
     }
   }, [session]);
 
-  // Listen for new messages from the server
+  // Listen for incoming messages
   useEffect(() => {
-    socket.on("chat_messages", (messages: Message[]) => {
+    socket.on("messages", (messages: Message[]) => {
       setMessages(messages);
     });
 
+    socket.on("message:sent", (newMessage: Message) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
     return () => {
-      socket.off("chat_messages");
+      socket.off("message:sent");
     };
   }, []);
 
-  // Handle sending messages
+  // Send message to the server
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent form default behavior (page reload)
     if (message.trim()) {
-      socket.emit("chat_message", { content: message, session });
-      setMessage(""); // Clear input field after sending
+      socket.emit("message:send", {
+        session,
+        content: message,
+      });
+      setMessage(""); // Clear message input
     }
   };
 
