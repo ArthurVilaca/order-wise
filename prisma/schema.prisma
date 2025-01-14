@@ -14,14 +14,15 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(cuid())
-  name        String?
-  email       String?   @unique
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
   emailVerified DateTime?
-  image       String?
-  accounts    Account[]
-  sessions    Session[]
-  messages    Message[]
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  messages      Message[]
+  orders        Order[]
 }
 
 model Message {
@@ -55,4 +56,24 @@ model Session {
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  status    String // e.g., 'pending', 'in-progress', 'completed', 'canceled'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items     String[] // Store ordered items (e.g., ["Big Mac", "Fries"])
+  Refund    Refund[]
+}
+
+model Refund {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  reason    String
+  status    String // e.g., 'pending', 'approved', 'denied'
+  createdAt DateTime @default(now())
 }
