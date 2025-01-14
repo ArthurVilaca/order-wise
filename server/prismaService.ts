@@ -21,15 +21,3 @@ export const getMessages = async (email: string) => {
 
   return messages;
 };
-
-export const saveMessage = async (content: string, email: string) => {
-  const user = await prisma.user.findFirst({ where: { email } });
-  if (!user) throw new Error("User not found");
-
-  return prisma.message.create({
-    data: {
-      content,
-      userId: user.id,
-    },
-  });
-};

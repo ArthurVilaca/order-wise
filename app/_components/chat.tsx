@@ -68,7 +68,11 @@ const Chat = () => {
       >
         {messages.map((msg, idx) => (
           <div key={idx} style={{ padding: "5px 0" }}>
-            <strong>{msg.user.name}:</strong> {msg.content}
+            <strong>
+              {msg.role === "assistant" ? "AI Customer Support" : msg.user.name}
+              :
+            </strong>{" "}
+            {msg.content}
           </div>
         ))}
       </div>
