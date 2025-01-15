@@ -23,10 +23,14 @@ export const getAIResponse = async (message: string) => {
               - recommend:finalizeOrder -> Mark the order as 'completed'.
               - recommend:checkStatus -> Check the status of the latest order.
               - recommend:refund -> Mark the order as 'canceled'.
+              - recommend:search -> Search for menu items
             - On 'create' and 'update' actions, split each item with a comma.
             For example:
             - User: "I want a Big Mac and large fries."
             - AI: "recommend:createOrder Big Mac, Large Fries"
+            Another example:
+            - User: "I want something spicy"
+            - AI: "recommend:search spicy"
           `,
         },
         {
@@ -52,7 +56,27 @@ export const getAIResponse = async (message: string) => {
     console.error("Error getting AI response:", error.message || error);
     return {
       action: null,
-      content: "I'm sorry, but I couldn't process your request. Please try again.",
+      content:
+        "I'm sorry, but I couldn't process your request. Please try again.",
+    };
+  }
+};
+
+export const searchEmbedding = async (items: string) => {
+  try {
+    // Generate embedding for the query
+    const embeddingResponse = await openAI.embeddings.create({
+      model: "text-embedding-ada-002",
+      input: items,
+    });
+
+    return embeddingResponse.data[0].embedding;
+  } catch (error: any) {
+    console.error("Error getting AI response:", error.message || error);
+    return {
+      action: null,
+      content:
+        "I'm sorry, but I couldn't process your request. Please try again.",
     };
   }
 };

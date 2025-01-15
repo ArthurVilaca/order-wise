@@ -72,7 +72,7 @@ const Chat = () => {
               {msg.role === "assistant" ? "AI Customer Support" : msg.user.name}
               :
             </strong>{" "}
-            {msg.content}
+            <div style={{ whiteSpace: "pre-line" }}>{msg.content}</div>
           </div>
         ))}
       </div>

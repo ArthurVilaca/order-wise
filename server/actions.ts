@@ -1,8 +1,8 @@
 import { getUser } from "./prismaService";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, raw } from "@prisma/client";
 import { Socket } from "socket.io";
 
-import { getAIResponse } from "./aiService";
+import { getAIResponse, searchEmbedding } from "./aiService";
 
 const prisma = new PrismaClient();
 
@@ -12,6 +12,7 @@ const actions = {
   "recommend:checkStatus": lastOrderStatus,
   "recommend:finalizeOrder": finalizeOrder,
   "recommend:refund": refund,
+  "recommend:search": handleRecommendations,
 };
 
 export async function createOrder(orderData, socket) {
@@ -30,7 +31,6 @@ export async function createOrder(orderData, socket) {
       },
     });
 
-    // socket.emit("order:created", newOrder); // Emit the newly created order
     const message = await prisma.message.create({
       data: {
         userId: (await getUser(email))!.id,
@@ -221,6 +221,7 @@ export const handleChatMessage = async (messageData: any, socket: Socket) => {
           {
             session: messageData.session,
             items: aiResponse.content, // For create or update orders
+            originalMessage: content,
           },
           socket
         );
@@ -238,3 +239,54 @@ export const handleChatMessage = async (messageData: any, socket: Socket) => {
     });
   }
 };
+
+export async function handleRecommendations(orderData, socket) {
+  const {
+    originalMessage,
+    session: {
+      user: { email, name },
+    },
+  } = orderData;
+
+  try {
+    // Generate embedding for the input message
+    const queryEmbeddingArray = await searchEmbedding(originalMessage);
+
+    if (!queryEmbeddingArray || !Array.isArray(queryEmbeddingArray)) {
+      throw new Error("Invalid embedding generated.");
+    }
+
+    // Format embedding for PostgreSQL
+    const queryEmbedding = `[${queryEmbeddingArray.join(",")}]`;
+
+    // Perform similarity search in the database
+    const items = await prisma.$queryRaw`
+      SELECT id, name, description, category, price, embedding <-> ${queryEmbedding}::vector AS distance
+      FROM "MenuItem"
+      ORDER BY distance ASC
+      LIMIT 5
+    `;
+
+    let content = "We have these suggestions for you:";
+    items.forEach((element) => {
+      content += `\n- ${element.name}: $${element.price.toFixed(2)}`;
+    });
+
+    const message = await prisma.message.create({
+      data: {
+        userId: (await getUser(email))!.id,
+        content: content,
+        role: "assistant",
+      },
+    });
+
+    socket.emit("message:sent", { ...message, user: { name, email } });
+  } catch (error) {
+    console.error("Error performing search:", error);
+
+    // Emit error to the client
+    socket.emit("search:error", {
+      message: "Search failed. Please try again.",
+    });
+  }
+}

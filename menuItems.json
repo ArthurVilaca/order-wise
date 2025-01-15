@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "name": "Big Mac",
+    "description": "Two beef patties, lettuce, cheese, pickles, onions, and special sauce on a sesame seed bun.",
+    "category": "Burgers",
+    "price": 5.99
+  },
+  {
+    "id": 2,
+    "name": "Quarter Pounder with Cheese",
+    "description": "A quarter-pound beef patty with cheese, pickles, onions, ketchup, and mustard on a sesame seed bun.",
+    "category": "Burgers",
+    "price": 6.29
+  },
+  {
+    "id": 3,
+    "name": "Cheeseburger",
+    "description": "A simple classic with a beef patty, cheese, pickles, onions, ketchup, and mustard on a soft bun.",
+    "category": "Burgers",
+    "price": 2.19
+  },
+  {
+    "id": 4,
+    "name": "Hamburger",
+    "description": "A classic beef patty with pickles, onions, ketchup, and mustard on a soft bun.",
+    "category": "Burgers",
+    "price": 1.99
+  },
+  {
+    "id": 5,
+    "name": "McChicken",
+    "description": "A crispy chicken patty with shredded lettuce and mayonnaise on a toasted bun.",
+    "category": "Chicken",
+    "price": 3.69
+  },
+  {
+    "id": 6,
+    "name": "Chicken McNuggets (10 pc)",
+    "description": "Ten pieces of tender and juicy chicken nuggets with your choice of dipping sauce.",
+    "category": "Chicken",
+    "price": 4.49
+  },
+  {
+    "id": 7,
+    "name": "Filet-O-Fish",
+    "description": "Wild-caught fish filet with tartar sauce and cheese on a steamed bun.",
+    "category": "Seafood",
+    "price": 4.99
+  },
+  {
+    "id": 8,
+    "name": "French Fries (Large)",
+    "description": "Golden, crispy fries made from premium potatoes.",
+    "category": "Sides",
+    "price": 2.89
+  },
+  {
+    "id": 9,
+    "name": "Apple Slices",
+    "description": "Fresh and crisp apple slices, a healthy snack option.",
+    "category": "Sides",
+    "price": 1.49
+  },
+  {
+    "id": 10,
+    "name": "Side Salad",
+    "description": "Freshly prepared salad with mixed greens, grape tomatoes, and shredded cheese.",
+    "category": "Sides",
+    "price": 2.99
+  },
+  {
+    "id": 11,
+    "name": "Coca-Cola (Medium)",
+    "description": "A refreshing medium-sized Coca-Cola beverage.",
+    "category": "Beverages",
+    "price": 1.89
+  },
+  {
+    "id": 12,
+    "name": "Sprite (Medium)",
+    "description": "A refreshing medium-sized Sprite beverage.",
+    "category": "Beverages",
+    "price": 1.89
+  },
+  {
+    "id": 13,
+    "name": "Vanilla Milkshake",
+    "description": "A creamy vanilla milkshake topped with whipped cream.",
+    "category": "Beverages",
+    "price": 3.69
+  },
+  {
+    "id": 14,
+    "name": "Hot Fudge Sundae",
+    "description": "Creamy vanilla ice cream topped with hot fudge.",
+    "category": "Desserts",
+    "price": 2.39
+  },
+  {
+    "id": 15,
+    "name": "McFlurry with Oreo",
+    "description": "Creamy vanilla ice cream blended with Oreo cookie pieces.",
+    "category": "Desserts",
+    "price": 3.69
+  },
+  {
+    "id": 16,
+    "name": "Breakfast Burrito",
+    "description": "A scrambled egg, sausage, and cheese wrapped in a soft tortilla.",
+    "category": "Breakfast",
+    "price": 2.59
+  },
+  {
+    "id": 17,
+    "name": "Egg McMuffin",
+    "description": "A freshly cracked egg, Canadian bacon, and cheese on a toasted English muffin.",
+    "category": "Breakfast",
+    "price": 3.99
+  },
+  {
+    "id": 18,
+    "name": "Hash Browns",
+    "description": "Crispy and golden hash brown potatoes.",
+    "category": "Breakfast",
+    "price": 1.89
+  },
+  {
+    "id": 19,
+    "name": "Hotcakes",
+    "description": "Three fluffy pancakes served with butter and syrup.",
+    "category": "Breakfast",
+    "price": 3.79
+  },
+  {
+    "id": 20,
+    "name": "Chicken McGriddle",
+    "description": "Crispy chicken patty served between sweet maple-flavored griddle cakes.",
+    "category": "Breakfast",
+    "price": 3.79
+  }
+]

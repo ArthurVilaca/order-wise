@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "MenuItem" ALTER COLUMN "embedding" SET NOT NULL,
+ALTER COLUMN "embedding" SET DATA TYPE TEXT;
